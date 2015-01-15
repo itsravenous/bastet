@@ -6,7 +6,7 @@
  */
 
 var argv = require('yargs').argv;
-var fs = require('fs');
+var fs = require('fs-extra');
 var Handlebars = require('handlebars');
 var mkdirp = require('mkdirp').sync;
 
@@ -41,39 +41,73 @@ if (item == 'component') {
 
 } else if (item == 'page') {
 
+	// Validate options
+	if (!argv.template) {
+		console.log('No template specified. Usage: bastet create page --template template_name --id page_id --title "Page Title"');
+		process.exit();
+	}
+	if (!argv.id) {
+		console.log('No id specified. Usage: bastet create page --template template_name --id page_id --title "Page Title"');
+		process.exit();
+	}
+	if (!argv.title) {
+		console.log('No title specified. Usage: bastet create page --template template_name --id page_id --title "Page Title"');
+		process.exit();
+	}
+
 	outdir = projectDir+'/src/pages/'+argv.id;
 	outfile = argv.id;	template = bastetDir+'/bastet-templates/page.jade.hbs';
 	styles = bastetDir+'/bastet-templates/page.scss.hbs';
 	partial = false;
 
-} else {
+} else if (item != 'site') {
 	console.log('Unknown item type, exiting...');
 	process.exit();
 }
 
-// Ensure directory structure is present
-if (fs.existsSync(outdir)) {
-	console.log('Item with same name already exists, exiting...');
-	process.exit();
-}
-mkdirp(outdir);
+if (item == 'component' || item == 'template' || item == 'page') {
+	// Ensure directory structure is present
+	if (fs.existsSync(outdir)) {
+		throw new Error('Item with same name already exists, exiting...');
+	}
+	mkdirp(outdir);
 
-// Generate component jade from template
-var jadeTemplate = Handlebars.compile(fs.readFileSync(template).toString());
-var jadeSource = jadeTemplate(argv);
+	// Generate component jade from template
+	var jadeTemplate = Handlebars.compile(fs.readFileSync(template).toString());
+	var jadeSource = jadeTemplate(argv);
 
-// Write component jade to dir
-var jadePrefix = partial ? '_' : '';
-fs.writeFileSync(outdir+'/'+jadePrefix+outfile+'.jade', jadeSource);
+	// Write component jade to dir
+	var jadePrefix = partial ? '_' : '';
+	fs.writeFileSync(outdir+'/'+jadePrefix+outfile+'.jade', jadeSource);
 
-// Generate component styles from template
-var styleTemplate = Handlebars.compile(fs.readFileSync(styles).toString());
-var styleSource = styleTemplate(argv);
-fs.writeFileSync(outdir+'/_'+outfile+'.scss', styleSource);
+	// Generate component styles from template
+	var styleTemplate = Handlebars.compile(fs.readFileSync(styles).toString());
+	var styleSource = styleTemplate(argv);
+	fs.writeFileSync(outdir+'/_'+outfile+'.scss', styleSource);
 
-// Generate JS if required (components only)
-if (js) {
-	var jsTemplate = Handlebars.compile(fs.readFileSync(js).toString());
-	var jsSource = jsTemplate(argv);
-	fs.writeFileSync(outdir+'/'+outfile+'.js', jsSource);
+	// Generate JS if required (components only)
+	if (js) {
+		var jsTemplate = Handlebars.compile(fs.readFileSync(js).toString());
+		var jsSource = jsTemplate(argv);
+		fs.writeFileSync(outdir+'/'+outfile+'.js', jsSource);
+	}
+} else if (item == 'site') {
+	// Write package.json
+	var packageTemplate = Handlebars.compile(fs.readFileSync(bastetDir+'/bastet-templates/package.json').toString());
+	var packageSource = packageTemplate(argv);
+	fs.writeFileSync(projectDir+'/package.json', packageSource);
+
+	// Write readme
+	var readmeTemplate = Handlebars.compile(fs.readFileSync(bastetDir+'/bastet-templates/README.md').toString());
+	var readmeSource = readmeTemplate(argv);
+	fs.writeFileSync(projectDir+'/README.md', readmeSource);
+
+	// Copy gulpfile
+	fs.copySync(bastetDir+'/bastet-templates/gulpfile.js', projectDir+'/gulpfile.js');
+
+	// Copy main sass file
+	fs.copySync(bastetDir+'/bastet-templates/main.scss', projectDir+'/src/styles/main.scss');
+
+	// Copy main js file
+	fs.copySync(bastetDir+'/bastet-templates/main.js', projectDir+'/src/js/main.js');
 }
