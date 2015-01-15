@@ -2,7 +2,11 @@
   "name": "bastet",
   "version": "0.0.0",
   "description": "Bastet is a lightweight, component-focused static site builder",
-  "main": "bastet",
+  "bin": {
+    "bastet": "bastet.js"
+  },
+  "main": "bastet.js",
+  "preferGlobal": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
