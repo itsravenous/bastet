@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var browserify = require('gulp-browserify');
 var jade = require('gulp-jade');
 var sass = require('gulp-ruby-sass');
+var connect = require('gulp-connect');
 
 // Set build dir
 var dest = 'www/';
@@ -25,7 +26,8 @@ gulp.task('pages', function () {
 		.on('error', function (err) {
 			console.error('Error!', err.message);
 		})
-		.pipe(gulp.dest(dest));
+		.pipe(gulp.dest(dest))
+		.pipe(connect.reload());
 });
 
 // Compile styles to css
@@ -43,12 +45,14 @@ gulp.task('styles', function () {
 
 });
 
-// Default wrapper task
-gulp.task('default', [
-	'pages',
-	'styles',
-	'scripts'
-]);
+// Server
+gulp.task('connect', function() {
+	connect.server({
+		root: 'www',
+		livereload: true,
+		port: 8000
+	});
+});
 
 // Watch task
 gulp.task('watch', function () {
@@ -56,3 +60,12 @@ gulp.task('watch', function () {
 	gulp.watch('src/**/*.scss', ['styles']);
 	gulp.watch('src/**/*.js', ['scripts']);
 });
+
+// Default wrapper task
+gulp.task('default', [
+	'pages',
+	'styles',
+	'scripts',
+	'connect',
+	'watch'
+]);

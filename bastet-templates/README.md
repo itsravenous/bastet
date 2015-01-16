@@ -26,10 +26,7 @@ or a new page instance:
 ## Compiling the site
 Bastet sites use [Gulp](http://gulpjs.com/) to compile the various source files to HTML, CSS and JavaScript that your browser can render.
 
-Build the site:
+Build the site and compile and reload browser on changes:
 
 `gulp`
 
-Compile when changes are made:
-
-`gulp watch`
