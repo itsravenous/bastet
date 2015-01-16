@@ -13,6 +13,9 @@ html
 	head
 		title #{title}
 		meta(name="viewport", content="initial-scale=1.0")
+		link(rel="stylesheet", type="text/css", href="/css/main.css")
 
-	body(class="page--{{id}}")
+	body(class="page--{{id}} "+bodyClass)
 		block content
+
+		script(type="text/javascript", src="/js/main.js")
