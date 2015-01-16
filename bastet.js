@@ -24,6 +24,9 @@ var bastetDir = __dirname;
 
 if (item == 'component') {
 
+	if (!argv.id) argv.id = argv._[2];
+	if (!argv.name) argv.name = argv._[3];
+
 	outdir = projectDir+'/src/components/'+argv.id;
 	outfile = argv.id;
 	template = bastetDir+'/bastet-templates/component.jade.hbs';
@@ -32,6 +35,9 @@ if (item == 'component') {
 	js = argv.js ? bastetDir+'/bastet-templates/component.js.hbs' : false;
 	
 } else if (item == 'template') {
+
+	if (!argv.id) argv.id = argv._[2];
+	if (!argv.name) argv.name = argv._[3];
 
 	outdir = projectDir+'/src/templates/'+argv.id;
 	outfile = argv.id;
