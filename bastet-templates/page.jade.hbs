@@ -8,7 +8,7 @@ extends ../../templates/{{template}}/_{{template}}
 block vars
 	- var id = "{{id}}"
 	- var title = "{{title}}"
-	- var bodyClass = "page--"+{{id}}
+	- var bodyClass = "page--{{id}}"
 
 block content
 	h1 {{title}}
