@@ -1,6 +1,6 @@
 {
   "name": "bastet",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "Bastet is a lightweight, component-focused static site builder",
   "bin": {
     "bastet": "bastet.js"
