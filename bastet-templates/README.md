@@ -6,10 +6,6 @@ Install dependencies:
 
 `npm install`
 
-You will also need [Ruby](https://www.ruby-lang.org), SASS and the sass-globbing plugin installed. Ideally, we'd be using libsass to keep it node-y, but we need globbing support in sass which isn't available in libsass. Once you've got Ruby installed (if you're on Linux or OSX, you likely already have):
-
-`gem install sass sass-globbing`
-
 ## Creating your site components
 Create a new component:
 

@@ -1,7 +1,8 @@
 var gulp = require('gulp');
 var browserify = require('gulp-browserify');
 var jade = require('gulp-jade');
-var sass = require('gulp-ruby-sass');
+var cssGlobbing = require('gulp-css-globbing');
+var sass = require('gulp-sass');
 var connect = require('gulp-connect');
 var argv = require('yargs').argv;
 
@@ -47,17 +48,19 @@ gulp.task('pages', function () {
 
 // Compile styles to css
 gulp.task('styles', function () {
-	return sass('src/styles/main.scss', {
-		loadPath: 'src/styles',
-		require: [
-			'sass-globbing'
-		]
-	})
-	.on('error', function (err) {
-		console.error('Error!', err.message);
-	})
-	.pipe(gulp.dest(dest+'css'))
-	.pipe(connect.reload());
+	gulp.src('src/styles/main.scss')
+		.pipe(cssGlobbing({
+			extensions: ['.css', '.scss']
+		}))
+		.on('error', function (err) {
+			console.error('Error!', err.message);
+		})
+		.pipe(sass())
+		.on('error', function (err) {
+			console.error('Error!', err.message);
+		})
+		.pipe(gulp.dest(dest+'css'))
+		.pipe(connect.reload());
 
 });
 
