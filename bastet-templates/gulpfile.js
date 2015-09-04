@@ -9,11 +9,11 @@ var gulp = require('gulp'),
 	connect = require('gulp-connect'),
 	svgmin = require('gulp-svgmin'),
 	argv = require('yargs')
-			.default({
-				server: true,
-				watch: true,
-				env: 'development'
-			}).argv;
+		.default({
+			server: true,
+			watch: true,
+			env: 'development'
+		}).argv;
 
 // Set build dir
 var dest = 'www/';
@@ -23,8 +23,11 @@ gulp.task('scripts', function() {
 	// Single entry point to browserify
 	gulp.src('src/js/main.js')
 		.pipe(browserify({
-			debug: !gulp.env.production,
-			insertGlobals: false
+			debug: argv.env === 'development',
+			insertGlobals: false,
+			transform: [
+				'require-globify'
+			]
 		}))
 		.pipe(gulp.dest(dest+'js'))
 		.pipe(connect.reload());
@@ -83,7 +86,9 @@ gulp.task('styles', function () {
 		.on('error', function (err) {
 			console.error('Error!', err.message);
 		})
-		.pipe(sass())
+		.pipe(sass({
+			outputStyle: argv.env === 'development' ? 'expanded' : 'compressed'
+		}))
 		.on('error', function (err) {
 			console.error('Error!', err.message);
 		})
@@ -103,10 +108,12 @@ gulp.task('connect', function() {
 
 // Watch task
 gulp.task('watch', function () {
+	gulp.watch('content/**', ['pages']);
 	gulp.watch('src/**/*.jade', ['pages']);
 	gulp.watch('src/**/*.scss', ['styles']);
 	gulp.watch('src/**/*.js', ['scripts']);
-	gulp.watch('src/images/**', ['images']);
+	gulp.watch('src/img/**', ['images']);
+	gulp.watch('src/fonts/**', ['fonts']);
 	gulp.watch('src/content/**', ['content']);
 });
 
@@ -118,7 +125,7 @@ var defaultTask = [
 	'images',
 	'content'
 ];
-if (!argv.noserver) defaultTask.push('connect');
-if (!argv.nowatch) defaultTask.push('watch');
+if (argv.server) defaultTask.push('connect');
+if (argv.watch) defaultTask.push('watch');
 
 gulp.task('default', defaultTask);
