@@ -106,6 +106,12 @@ if (item == 'component' || item == 'template' || item == 'page') {
 		fs.writeFileSync(outdir+'/'+outfile+'.js', jsSource);
 	}
 } else if (item == 'site') {
+	// If dirname supplied, create instead of using current dir
+	if (argv._[2]) {
+		projectDir = argv._[2];
+		mkdirp(projectDir);
+	}
+
 	// Write package.json
 	var packageTemplate = Handlebars.compile(fs.readFileSync(bastetDir+'/bastet-templates/package.json').toString());
 	var packageSource = packageTemplate(argv);
