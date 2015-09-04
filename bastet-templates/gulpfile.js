@@ -1,10 +1,19 @@
-var gulp = require('gulp');
-var browserify = require('gulp-browserify');
-var jade = require('gulp-jade');
-var cssGlobbing = require('gulp-css-globbing');
-var sass = require('gulp-sass');
-var connect = require('gulp-connect');
-var argv = require('yargs').argv;
+var gulp = require('gulp'),
+	fs = require('fs'),
+	autoprefixer = require('gulp-autoprefixer'),
+	browserify = require('gulp-browserify'),
+	jade = require('gulp-jade'),
+	glob = require('glob'),
+	cssGlobbing = require('gulp-css-globbing'),
+	sass = require('gulp-sass'),
+	connect = require('gulp-connect'),
+	svgmin = require('gulp-svgmin'),
+	argv = require('yargs')
+			.default({
+				server: true,
+				watch: true,
+				env: 'development'
+			}).argv;
 
 // Set build dir
 var dest = 'www/';
@@ -37,8 +46,27 @@ gulp.task('content', function() {
 
 // Compile templates to html
 gulp.task('pages', function () {
+	// Inject content as vars named after the JSON files
+	var contentFiles = glob.sync('content/*.json');
+	var jadeVars = {
+		pkg: {
+			name: '<%= pkg.name %>'
+		}
+	};
+	contentFiles.forEach(function (file, i) {
+		var content = JSON.parse(fs.readFileSync(file));
+		if (content) {
+			var key = file.split('/').pop().replace('.json', '');
+			jadeVars[key] = content;
+		} else {
+			console.warn('Content file', file, 'is not valid JSON; skipping');
+		}
+	});
 	gulp.src('src/pages/**/*.jade')
-		.pipe(jade())
+		.pipe(jade({
+			pretty: true,
+			data: jadeVars
+		}))
 		.on('error', function (err) {
 			console.error('Error!', err.message);
 		})
