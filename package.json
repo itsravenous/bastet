@@ -1,6 +1,6 @@
 {
   "name": "bastet",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bastet is a lightweight, component-focused static site builder",
   "bin": {
     "bastet": "bastet.js"
@@ -16,6 +16,7 @@
   },
   "author": "Tom Jenkins",
   "dependencies": {
+    "chalk": "^1.0.0",
     "fs-extra": "^0.14.0",
     "handlebars": "^2.0.0",
     "jade": "^1.9.0",

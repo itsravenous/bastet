@@ -9,6 +9,7 @@ var argv = require('yargs').argv;
 var fs = require('fs-extra');
 var Handlebars = require('handlebars');
 var mkdirp = require('mkdirp').sync;
+var chalk = require('chalk');
 
 var action  = argv._[0]; // Currently always "create"
 var item  = argv._[1];
@@ -66,10 +67,17 @@ if (item == 'component') {
 	styles = bastetDir+'/bastet-templates/page.scss.hbs';
 	partial = false;
 
-} else if (item != 'site') {
-	console.log('Unknown item type, exiting...');
+} else if (argv.help || argv.h){
+	console.log('\n');
+	console.log(chalk.white.underline.bold('You asked for some help:'));
+	console.log('Create a component with: ' + chalk.white('bastet create component --id god_avatar --name "God Avatar"'));
+	console.log('Create a component with: ' + chalk.white('bastet create template --id god_profile --name "God profile template"'));
+	console.log('Create a component with: ' + chalk.white('bastet create page --template god_profile --id ra --title "Ra\'s profile page"'));
 	process.exit();
-}
+} else if (item != 'site') {
+	console.log('Unknown item type. If you need help try adding --help || -h, exiting...');
+	process.exit();
+} 
 
 if (item == 'component' || item == 'template' || item == 'page') {
 	// Ensure directory structure is present
@@ -98,6 +106,12 @@ if (item == 'component' || item == 'template' || item == 'page') {
 		fs.writeFileSync(outdir+'/'+outfile+'.js', jsSource);
 	}
 } else if (item == 'site') {
+	// If dirname supplied, create instead of using current dir
+	if (argv._[2]) {
+		projectDir = argv._[2];
+		mkdirp(projectDir);
+	}
+
 	// Write package.json
 	var packageTemplate = Handlebars.compile(fs.readFileSync(bastetDir+'/bastet-templates/package.json').toString());
 	var packageSource = packageTemplate(argv);
