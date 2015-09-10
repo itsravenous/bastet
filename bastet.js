@@ -130,4 +130,7 @@ if (item == 'component' || item == 'template' || item == 'page') {
 
 	// Copy main js file
 	fs.copySync(bastetDir+'/bastet-templates/main.js', projectDir+'/src/js/main.js');
+
+	// Copy gitignore
+	fs.copySync(bastetDir+'/bastet-templates/.gitignore', projectDir+'/.gitignore');
 }
