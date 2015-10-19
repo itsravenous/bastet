@@ -7,10 +7,16 @@ Bastet is a lightweight, component-focused static site builder. She is also the 
 # Getting started
 
 ```
+# Generate project
 npm install -g bastet
 mkdir my-site
 cd my-site
 bastet create site --name my-site
+# Install deps
+cd my-site
+npm install
+# Build and serve project
+npm run dev
 ```
 
 A basic structure and a `README.md` with further instructions will be generated for you.
